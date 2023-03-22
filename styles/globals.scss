@@ -1,0 +1,122 @@
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Rubik:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Work+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+:root{
+    --white: #ffffff;
+    --white2: #fbfaff;
+    --black: #000;
+    --grey: #616173;
+    --purple: #9d51ff;
+    --orange: #ffa700;
+    --red: #FF0055;
+    --blue: #00cfff;
+    --workSans: "Work Sans";
+    --rubik: "Rubik";
+    --crimson: "Crimson"
+}
+
+html {
+    display: flex;
+    width: 100vw;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background: var(--white2);
+}
+
+body {
+    display: flex;
+    flex-basis: 1px;
+    flex-grow: 1;
+    flex-direction: column;
+    position: relative;
+    margin: 0px;
+
+    * {
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        font-family: var(--workSans);
+        line-height: 100%;
+        height: fit-content;
+        margin: 0px;
+        padding: 0px;
+    }
+}
+
+#root, main {
+    flex-basis: 1px;
+    flex-grow: 1;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--rubik);
+}
+
+button, input, select, option {
+    border: none;
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.Contain {
+    width: 100%;
+    max-width: 1600px;
+    align-self: center;
+}
+
+#Header {
+    width: calc(100% - 2em);
+    padding: 0.75em 1em;
+
+    .Contain {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 2em;
+        max-width: 1600px;
+
+        nav {
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 1em;
+            align-items: center;
+            justify-content: center;
+        }
+
+        a {
+            font-family: var(--heading);
+            color: var(--purple);
+            background-color: var(--white);
+            transition: color 0.1s linear, background 0.1s linear, transform 0.1s linear;
+            font-size: 1.5em;
+            white-space: nowrap;
+            padding: 0.2em 0.75em;
+            border-radius: 15em;
+            box-shadow: 0 0 0 0.1em var(--purple);
+            text-decoration: none;
+    
+            &:hover {
+                color: var(--white);
+                background: var(--purple);
+                transform: scale(1.1);
+            }
+        }
+    }
+}
+
+#Footer {
+    width: calc(100% - 2em);
+    padding: 0em 1em;
+    background-color: var(--purple);
+
+    .Contain {
+        justify-content: center;
+        align-items: center;
+
+        p {
+            font-size: 2em;
+            font-weight: 400;
+            color: var(--white);
+        }
+    }
+}

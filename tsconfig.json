@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "target": "ES5",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "jsx": "react",
+    "outDir": "dist",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "ESNext"
+    ],
+    "sourceMap": true,
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": false,
+    "noFallthroughCasesInSwitch": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": false
+  },
+  "include": [
+    "**/*.tsx",
+    "**/*.ts",
+    "node_modules/hydrated-react-local-full-stack-scripts/watch.ts"  
+  ],
+  "exclude": [
+    "dist",
+    "node_modules",
+    "client"
+  ]
+}

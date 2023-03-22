@@ -1,0 +1,118 @@
+main {
+    form {
+        flex-direction: column;
+        padding: 2em;
+        height: fit-content;
+        margin: auto;
+        gap: 1em;
+
+        h1 {
+            color: var(--purple);
+            align-self: center;
+            font-size: 4em;
+            font-weight: 400;
+            margin-bottom: 0.4em;
+        }
+    
+        .LoginField {
+            background: var(--white);
+            width: 15em;
+            font-size: 1.75em;
+            padding: 0.4em 0.5em 0.3em 0.5em;
+            border-radius: 0.2em;
+            box-shadow: 0 0 0 0.1em var(--purple);
+            transition: box-shadow 0.1s linear, transform 0.1s linear;
+    
+            &:hover {
+                box-shadow: 0 0 0 0.1em var(--orange);
+                transform: scale(1.05);
+            }
+            
+            &:focus {
+                box-shadow: 0 0 0 0.1em var(--blue);
+                transform: scale(1.05);
+            }
+        }
+        input::placeholder {
+            opacity: 0.25;
+        }
+
+        .SubButtons {
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            height: 1.5em;
+
+            .RememberMe {
+                flex-direction: row;
+                gap: 0.5em;
+                align-items: center;
+                justify-content: center;
+                transition: transform 0.1s linear;
+
+                div {
+                    height: 1.25em;
+                    width: 1.25em;
+                    border-radius: 2em;
+                    box-shadow: 0 0 0 0.175em var(--purple), 0 0 0 0.2em var(--white) inset;
+                    transition: background-color 0.1s linear, box-shadow 0.1s linear;
+                }
+
+                p {
+                    font-size: 1.25em;
+                    font-weight: 500;
+                    color: var(--purple);
+                    transition: color 0.1s linear;
+                    user-select: none;
+                }
+
+                &:hover {
+                    transform: scale(1.1);
+                    cursor: pointer;
+
+                    p {
+                        color: var(--orange);
+                    }
+
+                    div {
+                        box-shadow: 0 0 0 0.15em var(--orange), 0 0 0 0.2em var(--white) inset;
+                    }
+                }
+            }
+
+            .LoginLink {
+                font-size: 1.4em;
+                font-weight: 500;
+                color: var(--blue);
+                margin-left: auto;
+                text-decoration: underline;
+                transition: color 0.1s linear, transform 0.1s linear;
+        
+                &:hover {
+                    color: var(--orange);
+                    transform: scale(1.15);
+                    cursor: pointer;
+                }
+            }
+        }
+    
+        button {
+            font-size: 1.75em;
+            font-weight: 500;
+            padding: 0.25em 1em;
+            margin: 0 auto;
+            border-radius: 15em;
+            background-color: var(--white);
+            color: var(--purple);
+            box-shadow: 0 0 0 0.1em var(--purple);
+            transition: transform 0.1s linear, box-shadow 0.1s linear, background-color 0.1s linear;
+    
+            &:hover{
+                color: var(--white);
+                background: var(--purple);
+                transform: scale(1.125);
+                cursor: pointer;
+            }
+        }
+    }
+}
