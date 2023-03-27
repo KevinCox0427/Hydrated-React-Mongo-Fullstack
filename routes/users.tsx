@@ -15,7 +15,7 @@ users.route('/login')
         const serverProps = {
             isAdmin: req.session.serverProps.isAdmin
         }
-        res.send(serveHTML(<Login ServerProps={serverProps}/>, 'Login', serverProps));
+        res.status(200).send(serveHTML(<Login ServerProps={serverProps}/>, 'Login', serverProps));
     });
 
 users.route('/logout')
