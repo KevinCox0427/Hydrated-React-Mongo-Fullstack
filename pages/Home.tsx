@@ -2,6 +2,7 @@ import React, { FunctionComponent } from 'react';
 import { hydrateRoot } from 'react-dom/client';
 import Header from './parts/Header';
 import Footer from './parts/Footer';
+import { sampleEmail } from '../utils/emailGenerator';
 
 type Props = {
     ServerProps: ServerPropsType
