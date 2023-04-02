@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { Strategy as LocalStrategy } from 'passport-local';
 import passport from 'passport';
-import crypto from 'crypto';
+import { scryptSync, randomBytes, timingSafeEqual } from 'crypto';
 
 import User from '../db/Users';
 import { app } from '../server';
@@ -22,7 +22,7 @@ passport.use(new LocalStrategy({
     passwordField: 'password'
 }, async (username, password, done) => {
     const user = await User.findOne({ username: username });
-    if (user && user.hash === crypto.pbkdf2Sync(password, user.salt, 10000, 64, 'sha512').toString('hex')) {
+    if (user && verifyPassword(user.salt, user.hash, password)) {
         return done(null, user);
     }
     return done(null, null);
@@ -48,14 +48,28 @@ app.use((req, res, next) => {
     next();
 });
 
-function isAuth ( req:Request, res:Response, next:NextFunction ) {
+
+export function generatePassword(password: string) {
+    const salt = randomBytes(16).toString('hex');
+    const hash = scryptSync(password, salt, 64).toString('base64');
+    return {
+        salt: salt,
+        hash: hash
+    }
+}
+
+function verifyPassword(salt:string, hashedPassword:string, inputPassword:string) {
+    const inputHashBuffer = scryptSync(inputPassword, salt, 64);
+    const savedHashBuffer = Buffer.from(hashedPassword, 'base64');
+    return timingSafeEqual(inputHashBuffer, savedHashBuffer);
+}
+
+export function isAuth ( req:Request, res:Response, next:NextFunction ) {
     if(req.isAuthenticated()) { next() }
     else res.status(302).redirect('/user/login');
 };
 
-function isAdmin ( req:Request, res:Response, next:NextFunction ) {
+export function isAdmin ( req:Request, res:Response, next:NextFunction ) {
     if(req.isAuthenticated() && req.user.admin) { next() }
     else res.status(302).redirect('/user/login');
 }
-
-export { isAdmin, isAuth };

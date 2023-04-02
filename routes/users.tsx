@@ -6,6 +6,7 @@ import serveHTML from "../utils/serveHTML";
 import Login from '../pages/Login';
 import User from '../db/Users';
 import RegexTester from '../utils/regexTester';
+import { generatePassword } from '../utils/authentication';
 
 const users = express.Router();
 
@@ -43,12 +44,12 @@ users.route('/register')
             password: string
         }
 
-        const salthash = generatePassword(typedReq.password);
+        const genPassword = generatePassword(typedReq.password);
         const user = {
             passportid: crypto.randomBytes(32).toString('hex'),
             username: typedReq.username,
-            hash: salthash.hash,
-            salt: salthash.salt,
+            hash: genPassword.hash,
+            salt: genPassword.salt,
             admin: true
         };
         
@@ -60,15 +61,5 @@ users.route('/register')
         User.create(user);
         res.send(true);
     })
-
-
-function generatePassword(password: string) {
-    var salt = crypto.randomBytes(32).toString('hex');
-    var genHash = crypto.pbkdf2Sync(password, salt, 10000, 64, 'sha512').toString('hex');
-    return {
-        salt: salt,
-        hash: genHash
-    }
-}
 
 export default users;
