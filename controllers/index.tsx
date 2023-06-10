@@ -11,6 +11,7 @@ index.route('/')
         const serverProps = {
             isAdmin: req.session.serverProps.isAdmin
         }
+        
         res.status(200).send(serveHTML(<Home ServerProps={serverProps}/>, 'Home', serverProps));
     });
 

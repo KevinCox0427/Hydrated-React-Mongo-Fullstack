@@ -10,6 +10,7 @@ route404.route('*')
         const serverProps = {
             isAdmin: req.session.serverProps.isAdmin
         }
+        
         res.status(404).send(serveHTML(<Page404 ServerProps={serverProps}/>, 'Page404', serverProps));
     });
 

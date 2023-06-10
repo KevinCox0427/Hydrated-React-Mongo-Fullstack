@@ -47,7 +47,7 @@ app.use(session({
 /**
  * Starting database configuration.
  */
-import './db/__init';
+import './models/__init__';
 
 
 /**
