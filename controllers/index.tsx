@@ -1,6 +1,6 @@
 import express from "express";
 import React from "react";
-import Home from "../pages/Home";
+import Home from "../views/Home";
 import { isAdmin } from "../utils/authentication";
 import serveHTML from "../utils/serveHTML";
 

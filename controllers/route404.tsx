@@ -1,7 +1,7 @@
 import express from "express";
 import React from "react";
 import serveHTML from "../utils/serveHTML";
-import Page404 from "../pages/Page404";
+import Page404 from "../views/Page404";
 
 const route404 = express.Router();
 

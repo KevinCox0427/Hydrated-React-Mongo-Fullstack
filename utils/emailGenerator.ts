@@ -3,32 +3,25 @@
  * The constructor will create the template, while the functions use the template to fill in the necessary data and return it as a string.
  */
 class EmailGenerator {
-    color:string;
     message:string;
     name:string;
     subtitle:string;
-    image:string;
     website:string;
 
     /**
-     * @param color Used as the primary color for the template.
-     * @param image Will be the image in the top left of the template (Ideally a logo with a low resolution).
      * @param name Used as the title of the header (will be linked to the provided website).
      * @param subtitle Used as the subtitle of the header (ideally a slogan or address).
      * @param message Used as disclaimer / message at the very bottom of the email.
      * @param websiteURL Used to link the headerImage and companyName
      */
     constructor(args: {
-        color: string,
         image: string,
         name: string,
         subtitle?: string,
         message: string,
         websiteURL: string,
     }) {
-        this.color = args.color;
         this.name = args.name;
-        this.image = args.image;
         this.website = args.websiteURL;
         this.subtitle = args.subtitle ? args.subtitle : '';
         this.message = args.message;
@@ -42,20 +35,31 @@ class EmailGenerator {
      * @param data The inserted data. All data MUST be an object but can be nested.
      * @returns an HTML email in a string format.
      */
-    generateHTMLEmail(subject:string, data:object) {
+    generateHTMLEmail(subject:string, data:object | string,) {
         /**
-         * Generating the head and top of the HTML document.
+         * Returns an HTML document based on the paramters.
          */
-        const dataTableHTML = `<body style="background-color:#ffffff !important; color:#000000 !important; font-family:'Work Sans', sans-serif;"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet"> 
-        <table border="0" cellpadding="0" cellspacing="0" width="600px" style="border-collapse: collapse; margin-left: auto; margin-right: auto; font-size: 16px;">
-        <tbody>
-            <tr style="background-color:#000000 !important; color:#ffffff !important;">
-                <th style="text-align: center; padding-top: 10px; padding-bottom: 10px; width:50% !important;"><a href="${this.website}"><img height="100" width="auto" src="${this.image}"></a></th>
-                <th style="text-align:center; font-weight:400; padding-top: 10px; padding-bottom: 10px; width:50% !important;"><a style="font-size:24px; font-weight:500; color:${this.color};" href="${this.website}">${this.name}</a><br>${this.subtitle}</th>
-            </tr>
-            <tr>
-                <td colspan="2" style="font-size:24px;font-weight:500;text-align:center;padding-top:50px;padding-bottom:50px;">${subject}</td>
-            </tr>`;
+        return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://w=
+        ww.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns=3D"https://www.w3.org/1999/xhtml" xmlns:v=3D"urn:schemas-micr=osoft-com:vml"><head><meta https-equiv=3D"Content-Type" content=3D"text/html; charset=3Dutf-8"=/><meta https-equiv=3D"X-UA-Compatible" content=3D"IE=3Dedge" /><meta name=3D"viewport" content=3D"width=3Ddevice-width, initial-scale=3D=1.0"><meta name=3D"x-apple-disable-message-reformatting" /><title>${subject}</title><style type=3D"text/css">
+        @font-face {
+            font-family: 'Libre Franklin';
+            src: url('https://fonts.gstatic.com/s/librefranklin/v13/jizDREVItHgc8qDIbSTKq4XkRiUf2zcZiVbJ.woff2') format('woff2');
+            font-weight: 200;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Libre Franklin';
+            src: url('https://fonts.gstatic.com/s/librefranklin/v13/jizBREVItHgc8qDIbSTKq4XkRiUa6zUTjnTLgNs.woff2') format('woff2');
+            font-weight: 200;
+            font-style: italic;
+        }
+        @font-face {
+            font-family: 'Arima';
+            src: url('https://fonts.gstatic.com/s/arima/v5/neIFzCqmt4Aup9CI_oCsNKEy.woff2') format('woff2');
+            font-weight: 200;
+            font-style: italic;
+        }
+        </style></head><body style="background-color:#eee5e4 !important; color:#47484d !important; font-family: 'Libre Franklin', sans-serif;"><table border="0" cellpadding="0" cellspacing="0" width="600px" style="border-collapse: collapse; margin-left: auto; margin-right: auto; font-size: 16px;max-width: 100% !important;"><tbody><tr style="border-bottom:2px dashed #47484d;"><th colspan="2" style="font-size:18px;padding-top:10px;padding-bottom:10px;font-weight:200;font-style:italic;"><h1 style="font-weight:200;font-size:36px;line-height:38px;margin-bottom:0px;font-family:'Arima',serif;font-style:normal;">${this.name}</h1>${this.subtitle}</th></tr><tr><td colspan="2" style="font-size:24px;line-height:26px;text-align:center;padding-top:35px;padding-bottom:30px;font-family:'Arima',serif;font-weight:200;">${subject}</td></tr>${typeof data === 'string' ? `<tr><td colspan="2" style="font-size:18px;font-weight:200;padding-top:25px;padding-bottom:25px;">${data}</td></tr>` : createTableRows(data, 0)}<tr><td colspan="2" style="font-size:18px;text-align:center;padding-top:40px;padding-bottom:45px;font-style:italic;font-weight:200;">${this.message}</td></tr><tr></tr><tr style="font-weight:200;border-top:2px dashed #47484d;"><td style="line-height:80%;vertical-align:center;padding-left:10px;padding-top:20px;padding-bottom:15px;padding-right:5px;font-family:'arima', serif;font-size:28px;">Kevin Cox</td><td style="vertical-align:center;padding-left:10px;padding-top:20px;padding-bottom:15px;padding-right:5px;line-height:140%;"><span style="font-weight: 400;margin-right:5px">Email:</span> kevin@dreamstate.graphics<br><span style="font-weight: 400;margin-right:5px">Phone:</span> (845) 649-7476</td></tr></tbody></table></body></html>`;
 
         /**
          * Creating each data field as a table row.
@@ -65,29 +69,27 @@ class EmailGenerator {
          * @param nestedIndex The index of how many times this function has been called recursevly. Used to add "padding-left" to the inserted values.
          */
         function createTableRows(inputData: object, nestedIndex: number): string {
-            return Object.keys(inputData).map(key => {
+            const rows = Object.keys(inputData).map(currentKey => {
+                /**
+                 * Getting the key. Adding 1 if it's an array
+                 */
+                const key = Array.isArray(inputData) ? parseInt(currentKey) + 1 : currentKey;
+
                 /**
                  * The value at the given key.
                  */
-                const value = inputData[key as keyof typeof inputData];
+                const value = inputData[currentKey as keyof typeof inputData];
 
-                return `<tr><td style="padding-left: ${10+(nestedIndex*15)}px;padding-top:5px;padding-bottom:5px;padding-right:5px;">${key}:</td><td style="padding-left: ${10+(nestedIndex*15)}px;padding-top:5px;padding-bottom:5px;padding-right:5px;">${typeof value == 'object' ? createTableRows(value, nestedIndex+1) : value}</td></tr>`;
+                return `<tr><td style="padding-left:${10+(nestedIndex*15)}px;padding-top:5px;padding-bottom:5px;padding-right:5px;font-weight:${Array.isArray(inputData) ? 200 : 400};">${key}:</td><td style="padding-left:${10+(nestedIndex*15)}px;font-weight:200;word-break:break-word;">${typeof value !== 'object' ? value : ''}</td></tr>${typeof value === 'object' ? createTableRows(value, nestedIndex+1) : ''}`;
+            }).join('');
+
+            /**
+             * Making every other row a brighter white.
+             */
+            return rows.split('<tr>').filter(row => row).map((row, i) => {
+                return i % 2 == 0 ? `<tr>${row}` : `<tr style="background-color:#f7f7f7 !important;">${row}`;
             }).join('');
         }
-
-        /**
-         * Making every other table row a grey color.
-         */
-        const tableRows = createTableRows(data, 0).split('<tr>').map((row, i) => {
-            return i % 2 == 0 ? `<tr>${row}` : `<tr style="background-color:#dddddd !important;">${row}`;
-        }).join('');
-
-        /**
-         * Putting it all together in a full HTML document.
-         */
-        const fullHTML = `<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office"><head><!--yahoo fix--></head><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta http-equiv="X-UA-Compatible" content="IE=Edge"><meta name="format-detection" content="telephone=no, date=no, address=no, email=no"><meta name="x-apple-disable-message-reformatting"><title>${this.name} Confirmation Email</title></head>${dataTableHTML}${tableRows}<tr><td colspan="2" style="text-align:center;font-size:18px;padding-top:50px;padding-bottom:50px;font-style:italic;">${this.message}</td></tr></tbody></table></body>`;
-
-        return fullHTML;
     }
 }
 

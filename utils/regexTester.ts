@@ -8,7 +8,8 @@ interface RegexTestInputs {
 /**
  * A utility class to test a given syntax of data against some regular expressions.
  * This is mostly intended to regulate what is valid information on a form to avoid bot spam.
- * You can also nest the data's syntax, as long as it does not contain arrays.
+ * You can nest your regex tests like a JSON object.
+ * If a tested value is an array, then it will run the regex test on each index.
  */
 class RegexTester {
     requiredRegexTests: RegexTestInputs;
@@ -30,8 +31,9 @@ class RegexTester {
      * @param regexTestObject This is mostly to be able to call this function recursively. If you're calling this funciton outside of "regexTester.ts", you don't need to worry about this.
      * @returns A string error message if a regex test fails, or the parsed data set if all regex tests pass.
      */
-    runTest(data: object, regexTestObject?: RegexTestInputs): string | object {
+    runTest(data: object, regexTestObject?: RegexTestInputs): string | {[key: string]: any} {
         let returnData = {};
+        
         if(!regexTestObject) {
             regexTestObject = {};
             Object.assign(regexTestObject, this.requiredRegexTests);
@@ -70,44 +72,71 @@ class RegexTester {
              * If the current regex test is an object, that means we need to recursively call this funciton.
              */
             if(!(regexTestObject[keyName] instanceof RegExp)) {
-                const result = this.runTest(value as object, regexTestObject[keyName] as RegexTestInputs);
-
                 /**
-                 * If it returns an error message, return it to the top level in the call stack.
+                 * If the value is an array, we must iteratate over it and call this recursevly at each index.
                  */
-                if(typeof result == 'string') return result;
+                if(Array.isArray(value)) {
+                    for(let j = 0; j < value.length; j++) {
+                        const result = this.runTest(value[j] as object, regexTestObject[keyName] as RegexTestInputs);
 
-                /**
-                 * Otherwise, add it to the return data object and iterate to the next loop.
-                 */
-                returnData = {...returnData,
-                    [keyName]: result
+                        /**
+                         * If it returns an error message, return it to the top level in the call stack.
+                         */
+                        if(typeof result == 'string') return result + ` (At index ${j+1})`;
+                    }
                 }
-                continue;
+                /**
+                 * Otherwise, just call this recursevly on the value.
+                 */
+                else {
+                    const result = this.runTest(value as object, regexTestObject[keyName] as RegexTestInputs);
+
+                    /**
+                     * If it returns an error message, return it to the top level in the call stack.
+                     */
+                    if(typeof result == 'string') return result;
+                }
             }
+            /**
+             * Otherwise we'll have to match the test.
+             */
+            else {
+                /**
+                 * If it's an array, we'll have to iterate over the values.
+                 */
+                if(Array.isArray(value)) {
+                    for(let j = 0; j < value.length; j++) {
+                        /**
+                         * If the array value is an object, run this recursevly.
+                         */
+                        if(typeof value[j] === 'object') {
+                           return this.runTest(value[j] as object, regexTestObject![keyName] as RegexTestInputs)
+                        }
+                        /**
+                         * Otherise, just run the match value function.
+                         */
+                        else {
+                            const result = matchTest(value[j].toString(), keyName);
 
-            /**
-             * Now that we're certain that the value is a string, we can type it as so.
-             */
-            value = value as string;
+                            /**
+                             * If it returns an error message, return it to the top level in the call stack.
+                             */
+                            if(typeof result == 'string') return result + ` (At index ${j+1})`;
+                        }
+                    }
+                }
+                /**
+                 * Otherwise it's a basic value, and we can just call the match test function.
+                 */
+                else {
+                    const result = matchTest(value.toString(), keyName);
 
-            /**
-             * Then we run the test.
-             */
-            const result = value.match(regexTestObject[keyName] as RegExp);
-
-            /**
-             * If Regex rest completly fails, just return a basic error message.
-             */
-            if(!result) return `Error: Please provide a valid ${keyName}`;
-            /**
-             * If Regex test fails but all joined matches are equal to the inputted value, this means it's too long.
-             */
-            if(result.length > 1 && result.join('') == value) return `Error: ${keyName} exceeds maximum character length.`;
-            /**
-             * If Regex test fails, then search for the illegal character and send back an error message stating so.
-             */
-            if(result[0] != value) return `Error: illegal character "${value.split(result[0])[1] == "" ? value.split(result[0])[0] : value.split(result[0])[1]}" in ${keyName}.`;
+                    /**
+                     * If the result is an error message, then we should return that to the top of the call stack.
+                     */
+                    if(typeof result === 'string') return result;
+                }
+            }
 
             /**
              * Now that we're certain it's a valid data field, add it to the returned data object.
@@ -115,6 +144,33 @@ class RegexTester {
             returnData = {...returnData,
                 [keyName]: value
             };
+        }
+
+        function matchTest(value:string, keyName:string) {
+            /**
+             * Then we run the test.
+             */
+            const result = value.match(regexTestObject![keyName] as RegExp);
+
+            /**
+             * If Regex rest completly fails, just return a basic error message.
+             */
+            if(!result) return `Error: Please provide a valid ${keyName}`;
+
+            /**
+             * If Regex test fails but all joined matches are equal to the inputted value, this means it's too long.
+             */
+            if(result.length > 1 && result[result.length-1] !== '' && result.join('') === value) return `Error: ${keyName} exceeds maximum character length.`;
+            
+            /**
+             * If Regex test fails, then search for the illegal character and send back an error message stating so.
+             */
+            if(result[0] != value) return `Error: illegal character "${value.split(result[0])[1] == "" ? value.split(result[0])[0].charAt(0) : value.split(result[0])[1].charAt(0)}" in ${keyName}.`;
+
+            /**
+             * If none of the gaurd clauses apply, then return true.
+             */
+            return true;
         }
 
         return returnData;

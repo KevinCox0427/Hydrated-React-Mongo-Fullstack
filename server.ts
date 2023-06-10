@@ -13,36 +13,41 @@ export const app = express();
 
 
 /**
- * Setting up server middleware and express sessions.
+ * Parsing all requests and responses to a JSON format.
+ * Also encoding all URIs.
  */
-import session from "express-session";
-import connectMongoDBSession from 'connect-mongodb-session';
-
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.set('etag', false);
 
 
 /**
- * Setting up a database for our express sessions.
+ * Setting user sessions and the database to store them
  */
-const MongoDBStore = connectMongoDBSession(session);
+import session from "express-session";
+import genFunc from 'connect-pg-simple';
+
+const PostgresqlStore = genFunc(session);
+
 app.use(session({ 
     secret: process.env.SessionSecret || 'secret',
-    resave: true,
-    saveUninitialized: true,
+    resave: false,
+    saveUninitialized: false,
     cookie: { 
         secure: false, //change to true when hosting on https server
-        maxAge: 24 * 60 * 60 * 1000,
-        sameSite: true
+        maxAge: 24 * 60 * 60 * 1000
     },
-    store: new MongoDBStore({
-        uri: process.env.MongoURI || 'mongodb://127.0.0.1:27017',
-        databaseName: process.env.DBName || 'Untitled',
-        collection: 'User Sessions',
-        expires: 1000 * 60 * 60 * 24
+    store: new PostgresqlStore({
+        conString: process.env.pgConnectionString,
+        createTableIfMissing: true
     })
 }));
+
+
+/**
+ * Starting database configuration.
+ */
+import './db/__init';
 
 
 /**
@@ -65,8 +70,8 @@ import './utils/authentication';
 /**
  * Declare your routes
  */
-import index from './routes/index';
-import users from './routes/users';
+import index from './controllers/index';
+import users from './controllers/users';
 
 app.use('/', index);
 app.use('/user', users);
@@ -83,7 +88,7 @@ app.use('/js', express.static('dist/public/js'));
 /**
  * Creating 404 route.
  */
-import route404 from './routes/route404';
+import route404 from './controllers/route404';
 app.use('*', route404);
 
 

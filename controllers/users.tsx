@@ -1,10 +1,9 @@
 import express from 'express';
 import passport from 'passport';
-import crypto from 'crypto';
 import React from 'react';
 import serveHTML from "../utils/serveHTML";
-import Login from '../pages/Login';
-import User from '../db/Users';
+import Login from '../views/Login';
+import User from '../models/user';
 import RegexTester from '../utils/regexTester';
 import { generatePassword } from '../utils/authentication';
 
@@ -16,13 +15,14 @@ users.route('/login')
         const serverProps = {
             isAdmin: req.session.serverProps.isAdmin
         }
+        
         res.status(200).send(serveHTML(<Login ServerProps={serverProps}/>, 'Login', serverProps));
     });
 
 users.route('/logout')
     .get(async (req, res) => {
         req.logout(() => {
-            res.redirect('/');
+            res.status(302).redirect('/');
         });
     });
 
@@ -34,8 +34,9 @@ const userTest = new RegexTester({
 users.route('/register')
     .post(async (req, res) => {
         const parsedReq = userTest.runTest(req.body);
+
         if(typeof parsedReq == 'string') {
-            res.send(parsedReq);
+            res.status(400).send(parsedReq);
             return;
         }
 
@@ -45,21 +46,28 @@ users.route('/register')
         }
 
         const genPassword = generatePassword(typedReq.password);
+
         const user = {
-            passportid: crypto.randomBytes(32).toString('hex'),
             username: typedReq.username,
-            hash: genPassword.hash,
-            salt: genPassword.salt,
+            passHash: genPassword.hash,
+            passSalt: genPassword.salt,
             admin: true
         };
+
+        const previousUsers = await User.get({
+            username: typedReq.username
+        }, {
+            amount: 1
+        });
         
-        if(await User.findOne({username: typedReq.username})) {
-            res.send('Error: User already exists.'); 
+        if(previousUsers.length > 0) {
+            res.status(400).send('Error: User already exists.'); 
             return;
         }
 
         User.create(user);
-        res.send(true);
+
+        res.status(200).send(true);
     })
 
 export default users;
